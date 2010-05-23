@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+	<title>Function.introspect.js Test</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+	<link rel="stylesheet" href="qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="qunit.js"></script>
+	<script type="text/javascript" src="Function.introspect.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		test('Function.introspect',function(){
+			var anonFunction = function (){},
+				namedFunction = function _namedFunction(){},
+				anonFunctionWithArgs = function (arg1, arg2){},
+				namedFunctionWithArgs = function _namedFunctionWithArgs(arg1, arg2){},
+				anonFunctionWithCode = function (){return;},
+				namedFunctionWithCode = function _namedFunctionWithCode(){return;},
+				anonFunctionWithArgsWithCode = function (arg1, arg2){return;},
+				namedFunctionWithArgsWithCode = function _namedFunctionWithArgsWithCode(arg1, arg2){return;},
+				f;
+			
+				f = Function.introspect(anonFunction);
+				equals(f.name, undefined);
+				equals(f.argNames.length, 0);
+				equals(f.args, '');
+				equals(f.code, '');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(namedFunction);
+				equals(f.name, '_namedFunction');
+				equals(f.argNames.length, 0);
+				equals(f.args, '');
+				equals(f.code, '');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(anonFunctionWithArgs);
+				equals(f.name, undefined);
+				equals(f.argNames.length, 2);
+				equals(f.argNames[0], 'arg1');
+				equals(f.argNames[1], 'arg2');
+				equals(f.args, 'arg1,arg2');
+				equals(f.code, '');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(namedFunctionWithArgs);
+				equals(f.name, '_namedFunctionWithArgs');
+				equals(f.argNames.length, 2);
+				equals(f.argNames[0], 'arg1');
+				equals(f.argNames[1], 'arg2');
+				equals(f.args, 'arg1,arg2');
+				equals(f.code, '');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(anonFunctionWithCode);
+				equals(f.name, undefined);
+				equals(f.argNames.length, 0);
+				equals(f.args, '');
+				equals(f.code, 'return;');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(namedFunctionWithCode);
+				equals(f.name, '_namedFunctionWithCode');
+				equals(f.argNames.length, 0);
+				equals(f.args, '');
+				equals(f.code, 'return;');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(anonFunctionWithArgsWithCode);
+				equals(f.name, undefined);
+				equals(f.argNames.length, 2);
+				equals(f.argNames[0], 'arg1');
+				equals(f.argNames[1], 'arg2');
+				equals(f.args, 'arg1,arg2');
+				equals(f.code, 'return;');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(namedFunctionWithArgsWithCode);
+				equals(f.name, '_namedFunctionWithArgsWithCode');
+				equals(f.argNames.length, 2);
+				equals(f.argNames[0], 'arg1');
+				equals(f.argNames[1], 'arg2');
+				equals(f.args, 'arg1,arg2');
+				equals(f.code, 'return;');
+				equals(f.isNative, false);
+				
+				f = Function.introspect(Object.prototype.hasOwnProperty);
+				equals(f.name, 'hasOwnProperty');
+				if (window.navigator.userAgent.match(/Chrome/)) {
+					// For some reason Chrome/V8 offers up thin non-native
+					// wrappers for all their native code.
+					equals(f.argNames.length, 1);
+					equals(f.argNames[0], 'V');
+					equals(f.args, 'V');
+					ok(f.code !== '[native code]');
+					equals(f.isNative, false);
+				} else {
+					equals(f.argNames.length, 0);
+					equals(f.args, '');
+					equals(f.args, '');
+					equals(f.code, '[native code]');
+					equals(f.isNative, true);
+				}
+				
+				if (String.indexOf !== undefined) { // Firefox 3 allows access like this.
+					f = Function.introspect(String.indexOf);
+					equals(f.name, 'indexOf');
+					equals(f.argNames.length, 0);
+					equals(f.args, '');
+					equals(f.args, '');
+					equals(f.code, '[native code]');
+					equals(f.isNative, true);
+				}
+			
+				f = Function.introspect(TypeError);
+				equals(f.name, 'TypeError');
+				equals(f.argNames.length, 0);
+				equals(f.args, '');
+				equals(f.args, '');
+				equals(f.code, '[native code]');
+				equals(f.isNative, true);
+		});
+	});
+	</script> 
+	</head>
+	<body>
+		<h1 id="qunit-header">Function.introspect.js Test</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+	</body>
+</html>
